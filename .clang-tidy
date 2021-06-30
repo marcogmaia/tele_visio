@@ -1,0 +1,15 @@
+Checks: '-*,
+    clang-analyzer-*,
+    clang-analyzer-cplusplus*,
+    performance-*,
+    portability-*,
+    modernize-*,
+    -modernize-use-trailing-*,
+    concurrency-*,
+    cppcoreguidelines-*
+'
+WarningsAsErrors:    ''
+HeaderFilterRegex:   ''
+FormatStyle:         none
+InheritParentConfig: true
+User:                marco

@@ -1,0 +1,64 @@
+Language: Cpp
+Standard: Cpp11
+
+UseTab: Never
+ContinuationIndentWidth: 4
+ColumnLimit: 150
+
+AccessModifierOffset: -4
+AlignAfterOpenBracket: Align
+AlignConsecutiveAssignments: true
+AlignConsecutiveDeclarations: false
+BreakBeforeBinaryOperators: All
+BreakBeforeTernaryOperators: true
+BreakConstructorInitializers: BeforeComma
+Cpp11BracedListStyle: true
+IndentWidth: 4
+NamespaceIndentation: None
+PointerAlignment: Left
+PointerBindsToType: true
+TabWidth: 4
+
+IncludeCategories:
+  - Regex:           '<[[:alnum:].]+>'
+    Priority:        0
+    SortPriority:    0
+  - Regex:           '"[[:alnum:].]+"'
+    Priority:        1
+    SortPriority:    1
+  - Regex:           '.*'
+    Priority:        2
+    SortPriority:    2
+SortIncludes: true
+
+AllowAllArgumentsOnNextLine: true
+AllowAllParametersOfDeclarationOnNextLine: true
+AllowAllParametersOfDeclarationOnNextLine: true
+AllowShortBlocksOnASingleLine: Always
+AlwaysBreakTemplateDeclarations: true
+
+AllowShortBlocksOnASingleLine: Always
+AllowShortCaseLabelsOnASingleLine: true
+AllowShortFunctionsOnASingleLine: Empty
+
+SpaceBeforeAssignmentOperators: true
+SpaceBeforeParens: Never
+SpaceInEmptyParentheses: false
+SpacesBeforeTrailingComments: 2
+
+IncludeBlocks: Regroup
+
+KeepEmptyLinesAtTheStartOfBlocks: false
+MaxEmptyLinesToKeep: 2
+
+ReflowComments: true
+
+AlignConsecutiveMacros: true
+AlignTrailingComments: true
+
+AllowShortLambdasOnASingleLine: true
+# AllowShortIfStatementsOnASingleLine: true
+
+# AlignAfterOpenBracket: AlwaysBreak
+# BinPackArguments: false
+# BinPackParameters: false
