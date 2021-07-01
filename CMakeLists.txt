@@ -28,7 +28,7 @@ enable_testing()
 
 add_executable(${PROJECT_NAME} src/main.cpp)
 # target_compile_features(${PROJECT_NAME} cxx_std_20)
-target_link_libraries(${PROJECT_NAME} PRIVATE raylib rlimgui)
+target_link_libraries(${PROJECT_NAME} PRIVATE fmt raylib rlimgui implot)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
