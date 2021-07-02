@@ -36,7 +36,9 @@
             },
             "problemMatcher": {
                 "base": "$gcc",
-                "fileLocation": ["absolute"]
+                "fileLocation": [
+                    "absolute"
+                ]
             },
         }
     ]

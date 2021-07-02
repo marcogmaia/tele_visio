@@ -10,7 +10,8 @@
             "name": "TeleVisio",
             "target": "tele_visio",
             "cwd": "${workspaceFolder}/build",
-            "valuesFormatting": "parseText"
+            "valuesFormatting": "parseText",
+            "preLaunchTask": "build"
         },
     ]
 }
