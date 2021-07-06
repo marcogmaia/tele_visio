@@ -26,7 +26,7 @@ include_directories(src)
 include(CTest)
 enable_testing()
 
-add_executable(${PROJECT_NAME} src/main.cpp)
+add_executable(${PROJECT_NAME} src/main.cpp src/server.cpp)
 # target_compile_features(${PROJECT_NAME} cxx_std_20)
 target_link_libraries(${PROJECT_NAME} PRIVATE fmt raylib rlimgui implot)
 

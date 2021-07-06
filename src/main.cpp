@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <future>
+#include <memory>
 
 #include "imgui.h"
 #include "implot.h"
@@ -31,21 +32,15 @@ namespace tv {
 rng_t rng{};
 
 
-std::thread init_server(asio::io_context& ioc, std::string_view port_str) {
-    std::thread ioc_thread;
-    auto asio_thread = [&ioc, &port_str]() {
-        try {
-            auto port = std::atoi(port_str.data());
-            Server server(ioc, port);
-            fmt::print("initializing server at {}...\n", port);
-            ioc.run();
-        } catch(std::exception& e) { std::cerr << "Exception: " << e.what() << "\n"; }
-    };
-
-    ioc_thread = std::thread(asio_thread);
-
-
-    return ioc_thread;
+std::unique_ptr<Server> init_server(asio::io_context& ioc, std::string_view port_str) {
+    try {
+        auto port = std::atoi(port_str.data());
+        // Server server(ioc, port);
+        auto uptr_server = std::make_unique<Server>(ioc, port);
+        fmt::print("server initialized at port: {}\n", port);
+        return uptr_server;
+    } catch(std::exception& e) { std::cerr << "Exception: " << e.what() << "\n"; }
+    return nullptr;
 }
 
 
@@ -87,20 +82,32 @@ void main_gui() {
 
         ImGui::Begin("Server");
         static bool server_initialized = false;
-
         static std::array<char, 16> port_buffer;
+        static std::unique_ptr<Server> uptr_server;
+
         ImGui::InputText("port", port_buffer.data(), port_buffer.size());
         ImGui::SameLine();
         if(ImGui::Checkbox("init server", &server_initialized)) {
             if(server_initialized) {
-                fmt::print("init\n");
-                ioc_thread = init_server(io_context, port_buffer.data());
+                fmt::print("initializing server...\n");
+                // ioc_thread = std::thread([] {
+                //     if(!server_ptr) {
+                //         server_ptr = init_server(io_context, port_buffer.data());
+                //     }
+                // io_context.run();
+                // });
+                uptr_server = init_server(io_context, port_buffer.data());
             } else {
                 fmt::print("shutting down the server...\n");
                 io_context.stop();
-                ioc_thread.join();
+                // ioc_thread.join();
+                io_context.restart();
+                uptr_server.reset();
+                fmt::print("server is off\n");
             }
-            fmt::print("pressed {}\n", port_buffer.data());
+        }
+        if(uptr_server) {
+            io_context.poll();
         }
         ImGui::End();
     }
