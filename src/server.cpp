@@ -5,13 +5,10 @@
 
 namespace tv {
 
-std::vector<std::shared_ptr<Session>> Session::m_sessions;
-
 void Session::do_read() {
-    m_sessions.emplace_back(shared_from_this());
     fmt::print("do_read called\n");
-    auto read_handler = [this](boost::system::error_code ec, std::size_t length) {
-        fmt::print("read handler called\n");
+    auto self(shared_from_this());
+    auto read_handler = [this, self](boost::system::error_code ec, std::size_t length) {
         if(!ec) {
             do_write(length);
         } else {
@@ -23,8 +20,9 @@ void Session::do_read() {
 
 void Session::do_write(std::size_t length) {
     fmt::print("do_write called\n");
-    m_sessions.emplace_back(shared_from_this());
-    auto write_handler = [this](boost::system::error_code ec, std::size_t /*length*/) {
+    // m_sessions.emplace_back(shared_from_this());
+    auto self(shared_from_this());
+    auto write_handler = [this, self](boost::system::error_code ec, std::size_t /*length*/) {
         fmt::print("write handler called\n");
         if(!ec) {
             do_read();
@@ -35,18 +33,9 @@ void Session::do_write(std::size_t length) {
     boost::asio::async_write(m_socket, boost::asio::buffer(m_data, length), write_handler);
 }
 
-Session::Session(tcp::socket& socket)
-    : m_socket(socket) {
+Session::Session(tcp::socket socket)
+    : m_socket(std::move(socket)) {
     fmt::print("created new session\n");
 }
 
-
-Session::~Session() {
-    fmt::print("session terminated\n");
-    m_socket.close();
-}
-
-void Session::terminate_all_sessions() {
-    m_sessions.clear();
-}
 }  // namespace tv

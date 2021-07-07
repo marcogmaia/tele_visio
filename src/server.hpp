@@ -2,6 +2,7 @@
 #pragma once
 
 #include <array>
+#include <cstdint>
 #include <cstdlib>
 #include <iostream>
 #include <memory>
@@ -18,10 +19,9 @@ using boost::asio::ip::tcp;
 
 class Session : public std::enable_shared_from_this<Session> {
 private:
-    static std::vector<std::shared_ptr<Session>> m_sessions;
-    tcp::socket& m_socket;
+    tcp::socket m_socket;
     static constexpr auto max_length = 1024;
-    std::array<char, max_length> m_data;
+    std::array<uint8_t, max_length> m_data;
 
     void do_read();
 
@@ -29,9 +29,11 @@ private:
 
 
 public:
-    Session(tcp::socket& socket);
+    Session(tcp::socket socket);
 
-    ~Session();
+    ~Session() {
+        fmt::print("session terminated\n");
+    };
 
     void start() {
         do_read();
@@ -40,22 +42,17 @@ public:
     void stop() {
         m_socket.close();
     }
-
-    static void terminate_all_sessions();
 };
 
 class Server {
 private:
     tcp::acceptor m_acceptor;
-    std::vector<tcp::socket> m_session_sockets;
 
     void do_accept() {
         m_acceptor.async_accept([this](boost::system::error_code ec, tcp::socket socket) {
             fmt::print("connection incoming\n");
             if(!ec) {
-                m_session_sockets.emplace_back(std::move(socket));
-                // Session(m_session_sockets.back()).start();
-                std::make_shared<Session>(m_session_sockets.back())->start();
+                std::make_shared<Session>(std::move(socket))->start();
             }
             do_accept();
         });
@@ -69,13 +66,6 @@ public:
 
     ~Server() {
         fmt::print("Server DTOR called\n");
-        // Session::terminate_all_sessions();
-        for(auto& sock : m_session_sockets) {
-            sock.shutdown(boost::asio::socket_base::shutdown_both);
-            sock.close();
-        }
-        m_session_sockets.clear();
-        Session::terminate_all_sessions();
     }
 };
 
