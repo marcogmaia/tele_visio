@@ -60,16 +60,10 @@ void main_gui() {
     {
         ImGui::Begin("custom plot", nullptr, ImGuiWindowFlags_NoCollapse);
 
-        constexpr auto num_pts = 1001;
-        static std::array<float, num_pts> xs;
-        static std::array<float, num_pts> ys;
-        for(int i = 0; i < num_pts; ++i) {
-            xs[i] = i * 0.001f;
-            ys[i] = rng.random_double();
-        }
-
+        ImPlot::FitNextPlotAxes();
         ImPlot::BeginPlot("my_plot");
-        ImPlot::PlotLine("random", xs.data(), ys.data(), xs.size());
+        auto& circular_buffer = Session::circular_buffer;
+        ImPlot::PlotLine("Buffer", circular_buffer.linearize(), circular_buffer.size());
         ImPlot::EndPlot();
 
         ImGui::End();
@@ -90,17 +84,10 @@ void main_gui() {
         if(ImGui::Checkbox("init server", &server_initialized)) {
             if(server_initialized) {
                 fmt::print("initializing server...\n");
-                // ioc_thread = std::thread([] {
-                //     if(!server_ptr) {
-                //         server_ptr = init_server(io_context, port_buffer.data());
-                //     }
-                // io_context.run();
-                // });
                 uptr_server = init_server(io_context, port_buffer.data());
             } else {
                 fmt::print("shutting down the server...\n");
                 io_context.stop();
-                // ioc_thread.join();
                 io_context.restart();
                 uptr_server.reset();
                 fmt::print("server is off\n");

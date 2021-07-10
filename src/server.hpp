@@ -10,8 +10,9 @@
 
 #include <boost/asio.hpp>
 #include <boost/asio/io_context.hpp>
+#include <boost/circular_buffer.hpp>
+#include <boost/circular_buffer/base.hpp>
 #include <fmt/core.h>
-
 
 namespace tv {
 
@@ -29,10 +30,12 @@ private:
 
 
 public:
+    static boost::circular_buffer<uint8_t> circular_buffer;
     Session(tcp::socket socket);
 
     ~Session() {
         fmt::print("session terminated\n");
+        m_socket.close();
     };
 
     void start() {

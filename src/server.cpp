@@ -1,9 +1,12 @@
 #include "server.hpp"
+#include <cstddef>
 #include <memory>
 
 #include <fmt/core.h>
 
 namespace tv {
+
+boost::circular_buffer<uint8_t> Session::circular_buffer{Session::max_length};
 
 void Session::do_read() {
     fmt::print("do_read called\n");
@@ -13,6 +16,11 @@ void Session::do_read() {
             do_write(length);
         } else {
             fmt::print("error\n");
+        }
+
+        for(size_t i = 0; i < length; ++i) {
+            circular_buffer.push_back(m_data[i]);
+            fmt::print("{}", static_cast<char>(m_data[i]));
         }
     };
     m_socket.async_read_some(boost::asio::buffer(m_data, max_length), read_handler);
